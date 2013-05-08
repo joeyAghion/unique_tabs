@@ -23,10 +23,12 @@ function removeDuplicates(tab, duplicates) {
     "" + duplicates.length + " " + tab_or_tabs + " containing " + abbreviatedUrl(tab) + " will be closed. (Or, click to cancel.)"
   ),
   removeTabs = function() {
-    chrome.tabs.remove(duplicates.map(function(t) { return t.id; }));
+    chrome.tabs.get(tab.id, function(t) {  // only close tabs if triggering tab still open
+      chrome.tabs.remove(duplicates.map(function(t) { return t.id; }));
+    });
     notification.close();
   },
-  removeTabsTimer = window.setTimeout(removeTabs, delay);
+  removeTabsTimer = window.setTimeout(removeTabs.bind(this), delay);
   notification.onclick = function() {
     window.clearTimeout(removeTabsTimer);
     notification.close();
