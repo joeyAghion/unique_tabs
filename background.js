@@ -9,7 +9,7 @@ function findDuplicates(tabId, changeInfo, tab) {
   
   chrome.tabs.getAllInWindow(tab.windowId, function(tabs) {
     var duplicates = tabs.filter(function(t) {
-      return t.url == tab.url && t.id != tabId && !t.pinned;
+      return t.url == tab.url && t.id != tabId && !t.pinned && t.status == 'complete';
     });
     if (duplicates.length) removeDuplicates(tab, duplicates);
   });
