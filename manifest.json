@@ -1,9 +1,10 @@
 {
   "name": "Unique Tabs",
   "description": "Upon opening a new tab or navigating to a new page, this extension closes any earlier, duplicate tabs in the same window.",
-  "version": "0.2",
+  "version": "1.0",
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["background.js"],
+    "persistent": false
   },
   "icons": {
     "16": "icon16.png",
