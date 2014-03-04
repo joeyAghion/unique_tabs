@@ -18,34 +18,35 @@ function handleDuplicate(tab, duplicates)
 	chrome.tabs.highlight( { windowId : tab.windowId, tabs : duplicates[0].id } , function(){/* mandatory callback */}); // select original tab
 	chrome.tabs.update( duplicates[0].id, { active: true, selected : true, highlighted : true } );
 
-	if(typeof webkitNotifications !== "undefined")
-	{
-		var notification = webkitNotifications.createNotification(
-			"",
-			"Found " + duplicates.length + " duplicate " + (duplicates.length > 1 ? "tabs" : "tab") + " for " + abbreviatedUrl(tab),
-			"The original tab just got reactivated for you.\
-			The new one will get closed shortly.\
-			(Click this notification to cancel)"
-		);
-		notification.onclick = function() {
-			window.cancelTimeout( timeout );
-			notification.close();
-			return false;
-		};
-
-		var timeout = window.setTimeout( function(){
-			// remove new duplicate tab:
-			chrome.tabs.remove( tab.id );
-			console.log("removed duplicate");
-		}, 5000 );
-		notification.show();
-	}
+	if(chrome.notifications) chrome.notifications.create(
+		"UniqueTabs_"+tab.id,
+		{
+			"type" : "basic",
+			"iconUrl" : "icon48.png",
+			"title" : "Duplicate " + (duplicates.length === 1 ? "tab" : "tabs") + " found for " + abbreviatedUrl(tab),
+			"message" : "The original tab just got reactivated for you.\nThe new one will get closed shortly.\n(Click this notification to cancel)",
+			"isClickable" : true
+		},
+		function (id){ window.setTimeout(function(){ this.close(); }, 5000); }
+	);	
 	else
 	{
 		// remove new duplicate tab:
 		chrome.tabs.remove( tab.id );
-		console.log("removed duplicate");
+		console.log("UniqueTabs: duplicate removed");
 	}
 }
 
 chrome.tabs.onUpdated.addListener( findDuplicates );
+if(chrome.notifications)
+{
+	chrome.notifications.onClosed.addListener( function (id, byUser){
+		if(id.indexOf("UniqueTabs") === -1) return;
+
+		chrome.tabs.remove( parseInt( id.split("_")[1] ) );
+		console.log("UniqueTabs: duplicate removed");
+	});
+	chrome.notifications.onClicked.addListener( function (id){
+		if(id.indexOf("UniqueTabs") > -1) console.log("UniqueTabs: user canceled duplicate removal");
+	});
+}
