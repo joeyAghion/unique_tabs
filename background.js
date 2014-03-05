@@ -26,12 +26,12 @@ function removeDuplicates(tab, duplicates) {
     chrome.tabs.get(tab.id, function(t) {  // only close tabs if triggering tab still open
       chrome.tabs.remove(duplicates.map(function(t) { return t.id; }));
     });
-    notification.close();
+    notification.cancel();
   },
   removeTabsTimer = window.setTimeout(removeTabs.bind(this), delay);
   notification.onclick = function() {
     window.clearTimeout(removeTabsTimer);
-    notification.close();
+    notification.cancel();
     return false;
   }
   notification.show();
