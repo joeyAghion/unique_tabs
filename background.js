@@ -18,7 +18,7 @@ function findDuplicates(tabId, changeInfo, tab) {
 function removeDuplicates(tab, duplicates) {
   var tab_or_tabs = duplicates.length > 1 ? "tabs" : "tab",
   notification = webkitNotifications.createNotification(
-    '',
+    'icon48.png',
     "Found " + duplicates.length + " duplicate " + tab_or_tabs + ".",
     "" + duplicates.length + " " + tab_or_tabs + " containing " + abbreviatedUrl(tab) + " will be closed. (Or, click to cancel.)"
   ),

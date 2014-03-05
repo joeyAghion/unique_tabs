@@ -11,5 +11,8 @@
     "128": "icon128.png"
   },
   "permissions": ["tabs", "notifications"],
+  "web_accessible_resources": [
+    "icon48.png"
+  ],
   "manifest_version": 2
 }
