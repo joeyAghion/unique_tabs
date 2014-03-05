@@ -10,7 +10,7 @@
     "48": "icon48.png",
     "128": "icon128.png"
   },
-  "permissions": ["tabs", "notifications"],
+  "permissions": ["tabs", "notifications", "webNavigation"],
   "web_accessible_resources": [
     "icon48.png"
   ],

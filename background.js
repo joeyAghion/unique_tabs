@@ -4,17 +4,22 @@ function abbreviatedUrl(tab) {
   return tab.url.length > 30 ? tab.url.match(/^.{15}|.{15}$/g).join('...') : tab.url;
 }
 
-function findDuplicates(tabId, changeInfo, tab) {
-  if (!(changeInfo.status == 'complete' && tab.url && tab.url != '' && !tab.url.match(/^chrome:\/\//))) return;
+function onCompleted(details) {
+  if (details.frameId == 0 && details.url && details.url != '' && !details.url.match(/^chrome:\/\//)) {
+    chrome.tabs.get(details.tabId, function(tab) {
+      if (typeof tab == 'undefined') return null;
 
-  chrome.tabs.getAllInWindow(tab.windowId, function(tabs) {
-    var duplicates = tabs.filter(function(t) {
-      return t.url == tab.url && t.id != tabId && !t.pinned && t.status == 'complete';
+      chrome.tabs.getAllInWindow(tab.windowId, function(tabs) {
+        var duplicates = tabs.filter(function(t) {
+          return t.url == details.url && t.id != tab.id && !t.pinned && t.status == 'complete';
+        });
+        if (duplicates.length) {
+          removeDuplicates(tab, duplicates);
+        }
+      });
+
     });
-    if (duplicates.length) {
-      removeDuplicates(tab, duplicates);
-    }
-  });
+  }
 }
 
 function removeDuplicates(tab, duplicates) {
@@ -45,4 +50,4 @@ function removeDuplicates(tab, duplicates) {
   notification.show();
 }
 
-chrome.tabs.onUpdated.addListener(findDuplicates);
+chrome.webNavigation.onCompleted.addListener(onCompleted);
