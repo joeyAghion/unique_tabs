@@ -5,7 +5,7 @@ function abbreviatedUrl(tab) {
 }
 
 function findDuplicates(tabId, changeInfo, tab) {
-  if (!(changeInfo.status == 'complete' && tab.url && tab.url != '')) return;
+  if (!(changeInfo.status == 'complete' && tab.url && tab.url != '' && !tab.url.match(/^chrome:\/\//))) return;
 
   chrome.tabs.getAllInWindow(tab.windowId, function(tabs) {
     var duplicates = tabs.filter(function(t) {
