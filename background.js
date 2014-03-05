@@ -6,12 +6,14 @@ function abbreviatedUrl(tab) {
 
 function findDuplicates(tabId, changeInfo, tab) {
   if (!(changeInfo.status == 'complete' && tab.url && tab.url != '')) return;
-  
+
   chrome.tabs.getAllInWindow(tab.windowId, function(tabs) {
     var duplicates = tabs.filter(function(t) {
       return t.url == tab.url && t.id != tabId && !t.pinned && t.status == 'complete';
     });
-    if (duplicates.length) removeDuplicates(tab, duplicates);
+    if (duplicates.length) {
+      removeDuplicates(tab, duplicates);
+    }
   });
 }
 
@@ -20,11 +22,17 @@ function removeDuplicates(tab, duplicates) {
   notification = webkitNotifications.createNotification(
     'icon48.png',
     "Found " + duplicates.length + " duplicate " + tab_or_tabs + ".",
-    "" + duplicates.length + " " + tab_or_tabs + " containing " + abbreviatedUrl(tab) + " will be closed. (Or, click to cancel.)"
+    "" + duplicates.length + " " + tab_or_tabs + " containing " + abbreviatedUrl(tab) + " will be closed. (Click this notification to cancel.)"
   ),
   removeTabs = function() {
-    chrome.tabs.get(tab.id, function(t) {  // only close tabs if triggering tab still open
-      chrome.tabs.remove(duplicates.map(function(t) { return t.id; }));
+    chrome.tabs.get(tab.id, function(t) {
+      // only close tabs if triggering tab still open
+      if (typeof t == 'undefined')  return null;
+
+      // remove individual tabs because passing array that includes closed tabs fails silently
+      duplicates.forEach(function(duplicate) {
+        chrome.tabs.remove(duplicate.id);
+      });
     });
     notification.cancel();
   },
