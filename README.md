@@ -21,4 +21,4 @@ Feedback
 Feedback and forks welcome.
 
 ---
-[joey@aghion.com](mailto:joey@aghion.com)
+&copy; Joey Aghion, [joey@aghion.com](mailto:joey@aghion.com). See [LICENSE.txt](LICENSE.txt).
