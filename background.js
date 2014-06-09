@@ -24,11 +24,16 @@ function onCompleted(details) {
 
 function removeDuplicates(tab, duplicates) {
   var tab_or_tabs = duplicates.length > 1 ? "tabs" : "tab",
-  notification = webkitNotifications.createNotification(
-    'icon48.png',
-    "Found " + duplicates.length + " duplicate " + tab_or_tabs + ".",
-    "" + duplicates.length + " " + tab_or_tabs + " containing " + abbreviatedUrl(tab) + " will be closed. (Click this notification to cancel.)"
-  ),
+  title = "Found " + duplicates.length + " duplicate " + tab_or_tabs + ".",
+  message = "" + duplicates.length + " " + tab_or_tabs + " containing " + abbreviatedUrl(tab) + " will be closed. (Click this notification to cancel.)",
+  options = {
+    type: 'basic',
+    iconUrl: 'icon48.png',
+    title: title,
+    message: message,
+    isClickable: true
+  },
+  notificationId = null,
   removeTabs = function() {
     chrome.tabs.get(tab.id, function(t) {
       // only close tabs if triggering tab still open
@@ -39,15 +44,20 @@ function removeDuplicates(tab, duplicates) {
         chrome.tabs.remove(duplicate.id);
       });
     });
-    notification.cancel();
+    chrome.notifications.clear(notificationId, function(){});
   },
   removeTabsTimer = window.setTimeout(removeTabs.bind(this), delay);
-  notification.onclick = function() {
+
+  chrome.notifications.create('', options, function(nId) {
+    notificationId = nId;
+  });
+
+  chrome.notifications.onClicked.addListener(function(nId) {
+    if (nId != notificationId) return;
     window.clearTimeout(removeTabsTimer);
-    notification.cancel();
+    chrome.notifications.clear(notificationId, function(){});
     return false;
-  }
-  notification.show();
+  });
 }
 
 chrome.webNavigation.onCompleted.addListener(onCompleted);
