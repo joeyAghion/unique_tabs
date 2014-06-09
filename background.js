@@ -25,13 +25,14 @@ function onCompleted(details) {
 function removeDuplicates(tab, duplicates) {
   var tab_or_tabs = duplicates.length > 1 ? "tabs" : "tab",
   title = "Found " + duplicates.length + " duplicate " + tab_or_tabs + ".",
-  message = "" + duplicates.length + " " + tab_or_tabs + " containing " + abbreviatedUrl(tab) + " will be closed. (Click this notification to cancel.)",
+  message = "" + duplicates.length + " " + tab_or_tabs + " containing " + abbreviatedUrl(tab) + " will be closed.",
   options = {
     type: 'basic',
     iconUrl: 'icon48.png',
     title: title,
     message: message,
-    isClickable: true
+    isClickable: true,
+    buttons: [{title: 'Cancel'}]
   },
   notificationId = null,
   removeTabs = function() {
@@ -52,7 +53,7 @@ function removeDuplicates(tab, duplicates) {
     notificationId = nId;
   });
 
-  chrome.notifications.onClicked.addListener(function(nId) {
+  chrome.notifications.onButtonClicked.addListener(function(nId, buttonIndex) {
     if (nId != notificationId) return;
     window.clearTimeout(removeTabsTimer);
     chrome.notifications.clear(notificationId, function(){});
