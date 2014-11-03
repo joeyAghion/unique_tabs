@@ -8,6 +8,7 @@ function onCompleted(details) {
   if (details.frameId == 0 && details.url && details.url != '' && !details.url.match(/^chrome:\/\//)) {
     chrome.tabs.get(details.tabId, function(tab) {
       if (typeof tab == 'undefined') return null;
+      if (tab.url.match(/^view-source:/)) return null;
 
       chrome.tabs.getAllInWindow(tab.windowId, function(tabs) {
         var duplicates = tabs.filter(function(t) {
