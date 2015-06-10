@@ -5,7 +5,6 @@ function abbreviatedUrl(tab) {
 }
 
 function compareUrls(left, right) {
-  console.log(left, right);
   return left.replace(/#.*$/, "") == right.replace(/#.*$/, "");
 }
 
