@@ -1,0 +1,1 @@
+This Chrome extension does not collect or share user data. The permissions it requests are solely to provide its basic functionality to the user installing the extension.
