@@ -14,7 +14,7 @@ function onCompleted(details) {
       if (typeof tab == 'undefined') return null;
       if (tab.url.match(/^view-source:/)) return null;
 
-      chrome.tabs.getAllInWindow(tab.windowId, function(tabs) {
+      chrome.tabs.query({ windowId: tab.windowId }, function(tabs) {
         var duplicates = tabs.filter(function(t) {
           return compareUrls(t.url, details.url) && t.id != tab.id && !t.pinned && t.status == 'complete';
         });
@@ -52,7 +52,7 @@ function removeDuplicates(tab, duplicates) {
     });
     chrome.notifications.clear(notificationId, function(){});
   },
-  removeTabsTimer = window.setTimeout(removeTabs.bind(this), delay);
+  removeTabsTimer = setTimeout(removeTabs.bind(this), delay);
 
   chrome.notifications.create('', options, function(nId) {
     notificationId = nId;

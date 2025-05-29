@@ -3,16 +3,28 @@
   "description": "Upon opening a new tab or navigating to a new page, this extension closes any earlier, duplicate tabs in the same window.",
   "version": "0.6",
   "background": {
-    "scripts": ["background.js"]
+    "service_worker": "service_worker.js"
   },
   "icons": {
     "16": "icon16.png",
     "48": "icon48.png",
     "128": "icon128.png"
   },
-  "permissions": ["tabs", "notifications", "webNavigation"],
-  "web_accessible_resources": [
-    "icon48.png"
+  "permissions": [
+    "tabs",
+    "notifications",
+    "webNavigation"
   ],
-  "manifest_version": 2
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icon48.png"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "manifest_version": 3,
+  "content_security_policy": {}
 }
